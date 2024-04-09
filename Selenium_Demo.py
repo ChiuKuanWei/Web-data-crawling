@@ -31,8 +31,8 @@ chrome.get('https://shopee.tw/buyer/login?next=https%3A%2F%2Fshopee.tw%2F')
 time.sleep(random.randint(5, 10))
 
 # 自動輸入帳號和密碼
-username = "harry20040723@gmail.com"  
-password = "Chiukuanwei8715"  
+username = "***"  
+password = "***"  
 
 # HTML元素 name = "loginKey"
 username_input = chrome.find_element("name", "loginKey")
