@@ -84,8 +84,8 @@ time.sleep(random.randint(5,10))
 ####################################################################################
 ###                       至此，請先停下來手動登入帳號，再往後執行                  ###
 # 自動輸入帳號和密碼
-username = "harry20040723@gmail.com"  
-password = "Chiukuanwei8715"  
+username = "***"  
+password = "***"  
 
 # HTML元素 id = "email"
 username_input = driver.find_element("name", "loginKey")
