@@ -1,5 +1,3 @@
-# 參考文獻 :「蝦皮爬蟲」最詳細手把手教學，商品資料＋留言評論－【附Python程式碼】
-
 import requests
 import json
 import pandas as pd
@@ -81,8 +79,6 @@ time.sleep(random.randint(5,10))
 driver.get('https://shopee.tw/buyer/login?next=https%3A%2F%2Fshopee.tw%2F')
 time.sleep(random.randint(5,10))
 
-####################################################################################
-###                       至此，請先停下來手動登入帳號，再往後執行                  ###
 # 自動輸入帳號和密碼
 username = "***"  
 password = "***"  
@@ -100,8 +96,6 @@ password_input.send_keys(password)
 # 模擬按下 Enter 鍵進行登入
 password_input.send_keys(Keys.RETURN)
 time.sleep(random.randint(5,10))
-####################################################################################
-
 
 #---------- Part 1. 主要先抓下商品名稱與連結，之後再慢慢補上詳細資料 ----------
 print('---------- 開始進行爬蟲 ----------')
@@ -167,7 +161,6 @@ for i in tqdm(range(int(page))):
 
         break
 
-
     time.sleep(random.randint(20,30)) # 休息久一點
 
 # 2023/04/20 先將每頁抓到的商品儲存下來，方便後續追蹤並爬蟲
@@ -202,159 +195,6 @@ dic = {
     '資料已完整爬取':[ False for x in range(len(itemid)) ] ,
 }
 pd.DataFrame(dic).to_csv(f'C:\python-training\實作訓練\檔案存取區\{keyword}_商品資料.csv', encoding = ecode, index=False)
-
-# tEnd = time.time()#計時結束
-# totalTime = int(tEnd - tStart)
-# minute = totalTime // 60
-# second = totalTime % 60
-# print('資料儲存完成，花費時間（約）： ' + str(minute) + ' 分 ' + str(second) + '秒')
-
-
-
-# #---------- Part 2. 補上商品的詳細資料，由於多設了爬取的標記，因此爬過的就不會再爬了 ----------
-# print('---------- 開始進行爬蟲 ----------')
-# tStart = time.time()#計時開始
-
-# # 2023/04/20 先取得之前爬下來的紀錄
-# getData = pd.read_csv(keyword +'_商品資料.csv')
-# for i in tqdm(range(len(getData))):
-#     data = []
-#     # 2023/04/20 備標註已經抓過的，就不用再抓了，這樣就算之前爬到一半被中斷，也不會努力付諸東流
-#     if getData.iloc[i]['資料已完整爬取']==True:
-#         continue
-#     data.append(getData.iloc[i]['商品ID'])
-#     data.append(getData.iloc[i]['賣家ID'])
-#     data.append(getData.iloc[i]['商品名稱'])
-#     data.append(getData.iloc[i]['商品連結'])
-#     data.append(getData.iloc[i]['價格'])
-#     #請求商品詳細資料
-#     itemDetail = goods_detail(url = data[3], item_id = data[0], shop_id = data[1])
-
-#     # 抓不到資料就先跳過
-#     if itemDetail == '':
-#         print('抓不到商品詳細資料...\n')
-#         continue
-
-#     data.append(itemDetail['brand'])# 品牌
-#     data.append(itemDetail['stock'])# 存貨數量
-#     data.append(itemDetail['description'])# 商品文案
-#     data.append(itemDetail['ctime'])# 上架時間
-#     data.append(itemDetail['discount'])# 折數
-#     data.append(itemDetail['can_use_bundle_deal'])# 可否搭配購買
-#     data.append(itemDetail['can_use_wholesale'])# 可否大量批貨購買
-#     data.append(itemDetail['tier_variations'])# 可否分期付款
-#     data.append(itemDetail['historical_sold'])# 歷史銷售量
-#     data.append(itemDetail['is_cc_installment_payment_eligible'])# 可否分期付款
-#     data.append(itemDetail['is_official_shop'])# 是否官方賣家帳號
-#     data.append(itemDetail['is_pre_order'])# 是否可預購
-#     data.append(itemDetail['liked_count'])# 喜愛數量
-#     data.append(itemDetail['shop_location'])# 商家地點
-#     #SKU
-#     all_sku=[]
-#     for sk in itemDetail['models']:
-#         all_sku.append(sk['name'])
-#     data.append(all_sku)# SKU
-#     data.append(itemDetail['cmt_count'])# 評價數量
-#     data.append(itemDetail['item_rating']['rating_count'][5])# 五星
-#     data.append(itemDetail['item_rating']['rating_count'][4])# 四星
-#     data.append(itemDetail['item_rating']['rating_count'][3])# 三星
-#     data.append(itemDetail['item_rating']['rating_count'][2])# 二星
-#     data.append(itemDetail['item_rating']['rating_count'][1])# 一星
-#     data.append(itemDetail['item_rating']['rating_star'])# 評分
-#     data.append(True)# 資料已完整爬取
-
-#     getData.iloc[i] = data #塞入所有資料
-#     getData.to_csv(keyword +'_商品資料.csv', encoding = ecode, index=False)
-    
-#     time.sleep(random.randint(45,70)) # 休息久一點
-
-#     # 每爬5個商品，會再有一次更長的休息
-#     if i%5 == 0 :
-#         time.sleep(random.randint(30,150)) 
-
-# tEnd = time.time()#計時結束
-# totalTime = int(tEnd - tStart)
-# minute = totalTime // 60
-# second = totalTime % 60
-# print('資料儲存完成，花費時間（約）： ' + str(minute) + ' 分 ' + str(second) + '秒')
-
-
-
-# #---------- Part 3. 補上留言資料 ----------
-# print('---------- 開始進行爬蟲 ----------')
-# tStart = time.time()#計時開始
-# container_comment = pd.DataFrame()
-# # 2023/05/16 先取得之前爬下來的紀錄
-# getData = pd.read_csv(keyword +'_商品資料.csv')
-# for i in tqdm(range(len(getData))):
-    
-#     # 2023/05/16 消費者評論詳細資料
-#     theitemid = getData.iloc[i]['商品ID']
-#     theshopid = getData.iloc[i]['賣家ID']
-#     getname = getData.iloc[i]['商品名稱']
-#     theprice = getData.iloc[i]['價格']
-#     iteComment = goods_comments(item_id = theitemid, shop_id = theshopid)
-    
-#     # 2023/5/16，抓不到資料就先跳過
-#     if iteComment == None:
-#         continue
-
-#     userid = [] #使用者ID
-#     anonymous = [] #是否匿名
-#     commentTime = [] #留言時間
-#     is_hidden = [] #是否隱藏
-#     orderid = [] #訂單編號
-#     comment_rating_star = [] #給星
-#     comment = [] #留言內容
-#     product_SKU = [] #商品規格
-    
-#     for comm in iteComment:
-#         userid.append(comm['userid'])
-#         anonymous.append(comm['anonymous'])
-#         commentTime.append(comm['ctime'])
-#         is_hidden.append(comm['is_hidden'])
-#         orderid.append(comm['orderid'])
-#         comment_rating_star.append(comm['rating_star'])
-#         try:
-#             comment.append(comm['comment'])
-#         except:
-#             comment.append(None)
-        
-#         p=[]
-#         for pro in comm['product_items']:
-#             try:
-#                 p.append(pro['model_name'])
-#             except:
-#                 p.append(None)
-                
-#         product_SKU.append(p)
-        
-#     commDic = {
-#         '商品ID':[ theitemid for x in range(len(iteComment)) ],
-#         '賣家ID':[ theshopid for x in range(len(iteComment)) ],
-#         '商品名稱':[ getname for x in range(len(iteComment)) ],
-#         '價格':[ int(theprice) for x in range(len(iteComment)) ],
-#         '使用者ID':userid,
-#         '是否匿名':anonymous,
-#         '留言時間':commentTime,
-#         '是否隱藏':is_hidden,
-#         '訂單編號':orderid,
-#         '給星':comment_rating_star,
-#         '留言內容':comment,
-#         '商品規格':product_SKU
-#         }
-
-#     container_comment = pd.concat([container_comment,pd.DataFrame(commDic)], axis=0)
-#     container_comment.to_csv(keyword +'_留言資料.csv', encoding = ecode, index=False)
-
-#     time.sleep(random.randint(35,60)) # 休息久一點
-
-# tEnd = time.time()#計時結束
-# totalTime = int(tEnd - tStart)
-# minute = totalTime // 60
-# second = totalTime % 60
-# print('資料儲存完成，花費時間（約）： ' + str(minute) + ' 分 ' + str(second) + '秒')
-
 
 
 driver.close() 
